@@ -2,14 +2,22 @@ var win = 0;
 var tie = 0;
 var loss = 0;
 
+//in this case, user adn computer choice must be in the global scope because they are accessed in multiple functions
+var userChoice = "";
+var computerChoice = "";
+
 var choices = ["R", "P", "S"];
 
-function game() {
-    //TODO: prompt user R,P,S, save that to a variable
-    var userChoice = prompt("Rock, Paper or Scissors? Type R, P, or S.");
-    //edge case: what if they use lowercase letters?
+
+function getUserChoice() {
+
+    //prompt user R,P,S, store that to a variable
+    userChoice = prompt("Rock, Paper or Scissors? Type R, P, or S.");
+
+    //convert user choice to uppercase for standardization
     userChoice = userChoice.toUpperCase();
 
+    //handle invalid input
     if (
         userChoice !== "R"
         &&
@@ -18,24 +26,41 @@ function game() {
         userChoice !== "S"
     ) {
         alert("You MUST pick R, P, or S.");
-        game()
-    }
+        getUserChoice();
+    };
 
-    //TODO: generate computer choice
+    getComputerChoice();
+};
+
+
+function getComputerChoice() {
+
+    //generate computer choice
+
     //generate random index
     var randomIndex = Math.floor(Math.random() * choices.length);
-    //use random index to select computer choice
-    //store comuputer in a variable
-    var computerChoice = choices[randomIndex];
 
+    //use random index to select computer choice and store in variable
+    computerChoice = choices[randomIndex];
+
+    //alert user of computer choice
     alert("The computer choice is " + computerChoice);
 
-    //TODO: compare choices
+    determineOutcome();
+};
+
+
+function determineOutcome() {
+
+    //compare choices and alert user of outcome
+
+    //tie
     if (userChoice === computerChoice) {
         tie++;
         alert("It's a tie!!");
 
     } else if (
+
         //win
         //user rock, comp scissors || user paper comp rock || user scissors comp paper
         (userChoice === "R" && computerChoice === "S")
@@ -47,31 +72,44 @@ function game() {
         win++;
         alert("You win!!");
     } else {
+
+        //loss
         loss++;
         alert("You lose!")
     }
 
-    //loss
-    // //comp rock, user scissors || comp paper user rock || comp scissors user paper
+    displayStats();
+};
 
 
-    //TODO: show cumulative score
-    //include wins losses and ties
-    alert(`Your record:
+function displayStats() {
+
+    //show user's cumulative score
+    alert(
+        `Your record:
 Wins: ${win}
 Losses: ${loss}
-Ties: ${tie}`)
+Ties: ${tie}`);
 
-    //TODO: ask to play again
-    //start over from top
+    rePlayGame();
+};
+
+
+function rePlayGame() {
+    //ask if user would like to play again
 
     var rePlay = confirm("Would you like to play again?")
 
-    if (rePlay===true) {
-        game();
-    }else{
+    if (rePlay === true) {
+
+        //yes = start over from top
+
+        getUserChoice();
+    } else {
+
+        //no = end
         return;
     }
-}
+};
 
-game();
+getUserChoice();
