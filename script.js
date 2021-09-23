@@ -1,77 +1,113 @@
-var win = 0;
-var tie = 0;
-var loss = 0;
+let win = 0;
+let tie = 0;
+let loss = 0;
+const choices = ["R", "P", "S"];
 
-var choices = ["R", "P", "S"];
+const getUserChoice = async () => {
 
-function game() {
-    //TODO: prompt user R,P,S, save that to a variable
-    var userChoice = prompt("Rock, Paper or Scissors? Type R, P, or S.");
-    //edge case: what if they use lowercase letters?
-    userChoice = userChoice.toUpperCase();
+    const userChoice = prompt("Rock, Paper or Scissors? Type R, P, or S.").toUpperCase();
 
-    if (
-        userChoice !== "R"
-        &&
-        userChoice !== "P"
-        &&
-        userChoice !== "S"
-    ) {
-        alert("You MUST pick R, P, or S.");
-        game()
+    const valid = await validateUserChoice(userChoice);
+
+    switch (valid) {
+        case true:
+            return userChoice;
+            
+        default:
+            break;
     }
+};
 
-    //TODO: generate computer choice
-    //generate random index
-    var randomIndex = Math.floor(Math.random() * choices.length);
-    //use random index to select computer choice
-    //store comuputer in a variable
-    var computerChoice = choices[randomIndex];
+const validateUserChoice = async (choice) =>{
+    switch (choice) {
 
-    alert("The computer choice is " + computerChoice);
+        case "R":
+        case "P":
+        case "S":
+            return true;
 
-    //TODO: compare choices
+        default:
+            return false
+    }
+}
+
+
+const getComputerChoice = async () => {
+
+    const computerChoice = choices[Math.floor(Math.random() * choices.length)]
+
+    alert(`Computer chooses ${computerChoice}`);
+
+    return computerChoice;
+};
+
+
+const determineOutcome = async (userChoice, computerChoice) => {
+
+    let outcome = "";
+
     if (userChoice === computerChoice) {
         tie++;
-        alert("It's a tie!!");
+        outcome = "tie";
 
     } else if (
-        //win
-        //user rock, comp scissors || user paper comp rock || user scissors comp paper
-        (userChoice === "R" && computerChoice === "S")
-        ||
-        (userChoice === "P" && computerChoice === "R")
-        ||
+        (userChoice === "R" && computerChoice === "S") ||
+        (userChoice === "P" && computerChoice === "R") ||
         (userChoice === "S" && computerChoice === "P")) {
-
         win++;
-        alert("You win!!");
+        outcome = "win";
+
     } else {
         loss++;
-        alert("You lose!")
-    }
+        outcome = "lose"
+    };
 
-    //loss
-    // //comp rock, user scissors || comp paper user rock || comp scissors user paper
+    return outcome;
+};
 
 
-    //TODO: show cumulative score
-    //include wins losses and ties
+const displayOutcome = async (outcome) => {
+
+    switch (outcome) {
+
+        case "tie":
+            alert("It's a tie!")
+            break;
+
+        case "win":
+        case "lose":
+            alert(`You ${outcome}!`);
+            break;
+    };
+}
+
+
+const displayStats = async () => {
+
     alert(`Your record:
 Wins: ${win}
 Losses: ${loss}
-Ties: ${tie}`)
+Ties: ${tie}`);
+};
 
-    //TODO: ask to play again
-    //start over from top
+
+const rePlayGame = () => {
 
     var rePlay = confirm("Would you like to play again?")
 
-    if (rePlay===true) {
-        game();
-    }else{
-        return;
-    }
+    switch (rePlay) {
+        case true:
+            game();
+            break;
+        default:
+            break;
+    };
+};
+
+const game = async () => {
+    await displayOutcome(await determineOutcome(await getUserChoice(), await getComputerChoice()));
+    await displayStats();
+    rePlayGame();
 }
 
 game();
